@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Buttonpress.wav-7ab332383ca453129dd81a28856c3f7a.sample"
+
+[deps]
+
+source_file="res://Audio/SFX/Buttonpress.wav"
+dest_files=[ "res://.import/Buttonpress.wav-7ab332383ca453129dd81a28856c3f7a.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
