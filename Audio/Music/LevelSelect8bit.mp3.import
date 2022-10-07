@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/LevelSelect8bit.mp3-fe06e93d4f2310953a0f96d098ff5c28.mp3str"
+
+[deps]
+
+source_file="res://Audio/Music/LevelSelect8bit.mp3"
+dest_files=[ "res://.import/LevelSelect8bit.mp3-fe06e93d4f2310953a0f96d098ff5c28.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

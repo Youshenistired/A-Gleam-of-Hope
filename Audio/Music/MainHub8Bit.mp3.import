@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/MainHub8Bit.mp3-1172be1f2754c407a00d6a5222141477.mp3str"
+
+[deps]
+
+source_file="res://Audio/Music/MainHub8Bit.mp3"
+dest_files=[ "res://.import/MainHub8Bit.mp3-1172be1f2754c407a00d6a5222141477.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

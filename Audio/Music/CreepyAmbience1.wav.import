@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/CreepyAmbience1.wav-00fdcc51846faeda00e2c7a13a97f670.sample"
+
+[deps]
+
+source_file="res://Audio/Music/CreepyAmbience1.wav"
+dest_files=[ "res://.import/CreepyAmbience1.wav-00fdcc51846faeda00e2c7a13a97f670.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
