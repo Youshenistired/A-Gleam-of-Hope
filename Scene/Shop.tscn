@@ -1,0 +1,431 @@
+[gd_scene load_steps=22 format=2]
+
+[ext_resource path="res://DeterminationSansWebRegular-369X.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://Player Sprite.png" type="Texture" id=2]
+[ext_resource path="res://Sprites/Other/Coin.png" type="Texture" id=3]
+[ext_resource path="res://Sprites/Other/ShopButtonNormal.png" type="Texture" id=4]
+[ext_resource path="res://Sprites/Other/ShopItems.png" type="Texture" id=5]
+[ext_resource path="res://Sprites/Other/ShopButtonPress.png" type="Texture" id=6]
+[ext_resource path="res://Sprites/Other/ShopButtonHover.png" type="Texture" id=7]
+[ext_resource path="res://Scripts/Shop.gd" type="Script" id=8]
+[ext_resource path="res://Audio/SFX/Buttonpress.wav" type="AudioStream" id=9]
+[ext_resource path="res://Audio/SFX/ErrorButton.wav" type="AudioStream" id=10]
+[ext_resource path="res://Scene/Cursor.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Sprites/Other/SmallButtonHover.png" type="Texture" id=12]
+[ext_resource path="res://Sprites/Other/SmallButtonNormal.png" type="Texture" id=13]
+[ext_resource path="res://Sprites/Other/SmallButtonPress.png" type="Texture" id=14]
+
+[sub_resource type="Shader" id=2]
+code = "shader_type canvas_item;
+
+// Gonkee's fog shader for Godot 3 - full tutorial https://youtu.be/QEaTsz_0o44
+// If you use this shader, I would prefer it if you gave credit to me and my channel
+
+uniform vec3 color = vec3(0.9, 1.0, 1.0);
+uniform int OCTAVES = 4;
+
+float rand(vec2 coord){
+	return fract(sin(dot(coord, vec2(345, 5467)) * 1000.0) * 1000.0);
+}
+
+float noise(vec2 coord){
+	vec2 i = floor(coord);
+	vec2 f = fract(coord);
+
+	// 4 corners of a rectangle surrounding our point
+	float a = rand(i);
+	float b = rand(i + vec2(1.0, 0.0));
+	float c = rand(i + vec2(0.0, 1.0));
+	float d = rand(i + vec2(1.0, 1.0));
+
+	vec2 cubic = f * f * (3.0 - 2.0 * f);
+
+	return mix(a, b, cubic.x) + (c - a) * cubic.y * (1.0 - cubic.x) + (d - b) * cubic.x * cubic.y;
+}
+
+float fbm(vec2 coord){
+	float value = 0.0;
+	float scale = 0.5;
+
+	for(int i = 0; i < OCTAVES; i++){
+		value += noise(coord) * scale;
+		coord *= 2.0;
+		scale *= 0.5;
+	}
+	return value;
+}
+
+void fragment() {
+	vec2 coord = UV * 20.0;
+
+	vec2 motion = vec2( fbm(coord + vec2(TIME * -0.5, TIME * 0.5)) );
+
+	float final = fbm(coord + motion);
+
+	COLOR = vec4(color, final * 0.5);
+}"
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
+shader_param/color = Vector3( 0.9, 1, 1 )
+shader_param/OCTAVES = 4
+
+[sub_resource type="DynamicFont" id=4]
+size = 32
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=5]
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 32
+font_data = ExtResource( 1 )
+
+[sub_resource type="Animation" id=7]
+tracks/0/type = "value"
+tracks/0/path = NodePath("Transition:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Transition:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=8]
+tracks/0/type = "value"
+tracks/0/path = NodePath("Transition:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Transition:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 1 ), Color( 0, 0, 0, 0 ) ]
+}
+
+[node name="Shop" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_pivot_offset = Vector2( -296, -136 )
+script = ExtResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sprite" type="Sprite" parent="."]
+modulate = Color( 0.792157, 0.901961, 0.960784, 1 )
+position = Vector2( 280, 168 )
+scale = Vector2( 4.75, 2.875 )
+texture = ExtResource( 2 )
+
+[node name="Sprite2" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0.776471 )
+material = SubResource( 3 )
+position = Vector2( 560, 408 )
+scale = Vector2( 9.5, 7.25 )
+texture = ExtResource( 2 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 280, 168 )
+current = true
+zoom = Vector2( 0.55, 0.55 )
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -248.0
+margin_top = 16.0
+margin_right = -44.0
+margin_bottom = 49.0
+custom_fonts/font = SubResource( 4 )
+text = "Vending Machine"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ExtraHealth" type="Sprite" parent="."]
+position = Vector2( 86.525, 64.7912 )
+scale = Vector2( 4.53235, 4.53235 )
+texture = ExtResource( 5 )
+hframes = 3
+vframes = 2
+
+[node name="Shell" type="Sprite" parent="."]
+position = Vector2( 182.525, 64.7912 )
+scale = Vector2( 4.53235, 4.53235 )
+texture = ExtResource( 5 )
+hframes = 3
+vframes = 2
+frame = 1
+
+[node name="Shield" type="Sprite" parent="."]
+position = Vector2( 86.525, 160.791 )
+scale = Vector2( 4.53235, 4.53235 )
+texture = ExtResource( 5 )
+hframes = 3
+vframes = 2
+frame = 2
+
+[node name="LongAmmo" type="Sprite" parent="."]
+position = Vector2( 182.525, 160.791 )
+scale = Vector2( 4.53235, 4.53235 )
+texture = ExtResource( 5 )
+hframes = 3
+vframes = 2
+frame = 3
+
+[node name="SpeedBoost" type="Sprite" parent="."]
+position = Vector2( 86.525, 256.791 )
+scale = Vector2( 4.53235, 4.53235 )
+texture = ExtResource( 5 )
+hframes = 3
+vframes = 2
+frame = 4
+
+[node name="Ammo" type="Sprite" parent="."]
+position = Vector2( 182.525, 256.791 )
+scale = Vector2( 4.53235, 4.53235 )
+texture = ExtResource( 5 )
+hframes = 3
+vframes = 2
+frame = 5
+
+[node name="ExtraHealthCost" type="Label" parent="."]
+margin_left = 53.0
+margin_top = 88.0
+margin_right = 120.0
+margin_bottom = 105.0
+custom_fonts/font = SubResource( 5 )
+text = "$50"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ShellCost" type="Label" parent="."]
+margin_left = 149.0
+margin_top = 88.0
+margin_right = 216.0
+margin_bottom = 105.0
+custom_fonts/font = SubResource( 5 )
+text = "$20"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ShieldCost" type="Label" parent="."]
+margin_left = 53.0
+margin_top = 184.0
+margin_right = 120.0
+margin_bottom = 201.0
+custom_fonts/font = SubResource( 5 )
+text = "$40"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LongAmmoCost" type="Label" parent="."]
+margin_left = 149.0
+margin_top = 184.0
+margin_right = 216.0
+margin_bottom = 201.0
+custom_fonts/font = SubResource( 5 )
+text = "$30"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SpeedBoostCost" type="Label" parent="."]
+margin_left = 53.0
+margin_top = 280.0
+margin_right = 120.0
+margin_bottom = 297.0
+custom_fonts/font = SubResource( 5 )
+text = "$60"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AmmoCost" type="Label" parent="."]
+margin_left = 149.0
+margin_top = 280.0
+margin_right = 216.0
+margin_bottom = 297.0
+custom_fonts/font = SubResource( 5 )
+text = "$10"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="button1" type="TextureButton" parent="."]
+margin_left = 264.0
+margin_top = 64.0
+margin_right = 283.0
+margin_bottom = 74.0
+rect_scale = Vector2( 4.532, 4.532 )
+texture_normal = ExtResource( 4 )
+texture_pressed = ExtResource( 6 )
+texture_hover = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="button2" type="TextureButton" parent="."]
+margin_left = 368.0
+margin_top = 64.0
+margin_right = 387.0
+margin_bottom = 74.0
+rect_scale = Vector2( 4.532, 4.532 )
+texture_normal = ExtResource( 4 )
+texture_pressed = ExtResource( 6 )
+texture_hover = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="button3" type="TextureButton" parent="."]
+margin_left = 264.0
+margin_top = 128.0
+margin_right = 283.0
+margin_bottom = 138.0
+rect_scale = Vector2( 4.532, 4.532 )
+texture_normal = ExtResource( 4 )
+texture_pressed = ExtResource( 6 )
+texture_hover = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="button4" type="TextureButton" parent="."]
+margin_left = 368.0
+margin_top = 128.0
+margin_right = 387.0
+margin_bottom = 138.0
+rect_scale = Vector2( 4.532, 4.532 )
+texture_normal = ExtResource( 4 )
+texture_pressed = ExtResource( 6 )
+texture_hover = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="button5" type="TextureButton" parent="."]
+margin_left = 264.0
+margin_top = 192.0
+margin_right = 283.0
+margin_bottom = 202.0
+rect_scale = Vector2( 4.532, 4.532 )
+texture_normal = ExtResource( 4 )
+texture_pressed = ExtResource( 6 )
+texture_hover = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="button6" type="TextureButton" parent="."]
+margin_left = 368.0
+margin_top = 192.0
+margin_right = 387.0
+margin_bottom = 202.0
+rect_scale = Vector2( 4.532, 4.532 )
+texture_normal = ExtResource( 4 )
+texture_pressed = ExtResource( 6 )
+texture_hover = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BackButton" type="TextureButton" parent="."]
+margin_left = 464.0
+margin_top = 256.0
+margin_right = 474.0
+margin_bottom = 266.0
+rect_scale = Vector2( 4.532, 4.532 )
+texture_normal = ExtResource( 13 )
+texture_pressed = ExtResource( 14 )
+texture_hover = ExtResource( 12 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Money" type="Sprite" parent="."]
+position = Vector2( 272, 272 )
+scale = Vector2( 4.532, 4.532 )
+texture = ExtResource( 3 )
+hframes = 3
+vframes = 3
+
+[node name="Moneylabel" type="Label" parent="."]
+margin_left = 304.0
+margin_top = 256.0
+margin_right = 432.0
+margin_bottom = 289.0
+custom_fonts/font = SubResource( 6 )
+text = "0"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Error" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 10 )
+volume_db = -12.0
+
+[node name="ButtonPress" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 9 )
+volume_db = -12.0
+
+[node name="Cursor" parent="." instance=ExtResource( 11 )]
+
+[node name="Transition" type="Sprite" parent="."]
+visible = false
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 280, 168 )
+scale = Vector2( 10, 6.625 )
+texture = ExtResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/ChangeScene = SubResource( 7 )
+anims/LoadScene = SubResource( 8 )
+
+[connection signal="pressed" from="button1" to="." method="_on_button1_pressed"]
+[connection signal="pressed" from="button2" to="." method="_on_button2_pressed"]
+[connection signal="pressed" from="button3" to="." method="_on_button3_pressed"]
+[connection signal="pressed" from="button4" to="." method="_on_button4_pressed"]
+[connection signal="pressed" from="button5" to="." method="_on_button5_pressed"]
+[connection signal="pressed" from="button6" to="." method="_on_button6_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="_on_BackButton_pressed"]

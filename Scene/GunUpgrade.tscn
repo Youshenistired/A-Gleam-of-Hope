@@ -1,0 +1,72 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Sprites/Player & Enemy/GunUpgrades.png" type="Texture" id=1]
+[ext_resource path="res://Scripts/GunUpgrade.gd" type="Script" id=2]
+[ext_resource path="res://Audio/SFX/Powerup.wav" type="AudioStream" id=3]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 16.0
+height = 80.0
+
+[sub_resource type="Environment" id=2]
+background_mode = 4
+glow_enabled = true
+glow_strength = 0.7
+
+[sub_resource type="Animation" id=3]
+resource_name = "Get"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 100, 100, 100, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "Idle"
+length = 1.8
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 100, 100, 100, 1 ) ]
+}
+
+[node name="GunUpgrade" type="Area2D"]
+script = ExtResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+texture = ExtResource( 1 )
+hframes = 2
+vframes = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource( 1 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 2 )
+
+[node name="GetSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+volume_db = -16.824
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Get = SubResource( 3 )
+anims/Idle = SubResource( 4 )
+
+[connection signal="body_entered" from="." to="." method="_on_GunUpgrade_body_entered"]

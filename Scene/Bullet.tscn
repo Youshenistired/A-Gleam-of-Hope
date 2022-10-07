@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Scripts/Bullet.gd" type="Script" id=1]
+[ext_resource path="res://Sprites/Player & Enemy/Bullets.png" type="Texture" id=2]
+[ext_resource path="res://Audio/SFX/bulletexplode.wav" type="AudioStream" id=3]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 1.11686
+height = 7.99758
+
+[sub_resource type="CapsuleShape2D" id=2]
+radius = 0.71783
+height = 7.63658
+
+[node name="Bullet" type="Area2D" groups=[
+"Attack",
+]]
+script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 0.495517, 0.501697 )
+texture = ExtResource( 2 )
+hframes = 2
+vframes = 2
+frame = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -1.45998, 0 )
+rotation = 1.5708
+shape = SubResource( 1 )
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="DeathArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DeathArea"]
+position = Vector2( -1.41901, 0 )
+rotation = 1.5708
+shape = SubResource( 2 )
+
+[node name="Explode" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+volume_db = -15.295
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[connection signal="body_entered" from="DeathArea" to="." method="_on_DeathArea_body_entered"]

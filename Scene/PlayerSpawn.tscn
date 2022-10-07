@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Sprites/Buildables/Exit Door.png" type="Texture" id=1]
+
+[node name="PlayerSpawn" type="Node2D"]
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+hframes = 7
+vframes = 5
+frame = 33
+
+[node name="Position2D" type="Position2D" parent="."]
+position = Vector2( 0, -24 )
